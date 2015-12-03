@@ -22,6 +22,7 @@ namespace SendReceive
                 new DeviceAuthenticationWithRegistrySymmetricKey("NewIoT-11-Device", deviceKey)
                 );
             SendMessageAsync();
+            ReceiveCloudMessageAsync();
             Console.ReadKey();
         }
 
@@ -44,6 +45,19 @@ namespace SendReceive
                 await deviceClient.SendEventAsync(msg);
                 Console.WriteLine("{0} > Sending Message: {1}", DateTime.Now, json);
                 Thread.Sleep(1000);
+            }
+        }
+
+        private static async void ReceiveCloudMessageAsync()
+        {
+            Console.WriteLine("\n Receiving Cloud to device message....");
+            while(true)
+            {
+                var receiveMessage = await deviceClient.ReceiveAsync();
+                if (receiveMessage == null) continue;
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Received Message: {0}", Encoding.ASCII.GetString(receiveMessage.GetBytes()));
             }
         }
     }
